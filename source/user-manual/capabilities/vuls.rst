@@ -1,7 +1,9 @@
+.. Copyright (C) 2018 Wazuh, Inc.
+
 .. _vuls:
 
-Vuls integration
-================
+Vuls integration (Deprecated)
+=============================
 
 **Deprecated since Wazuh v3.2.0.**
 

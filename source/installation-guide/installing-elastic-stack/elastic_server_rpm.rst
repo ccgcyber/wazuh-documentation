@@ -1,3 +1,5 @@
+.. Copyright (C) 2018 Wazuh, Inc.
+
 .. _elastic_server_rpm:
 
 Install Elastic Stack with RPM packages
@@ -10,45 +12,45 @@ The RPM packages are suitable for installation on Red Hat, CentOS and other RPM-
 Preparation
 -----------
 
-1. Oracle Java JRE is required by Logstash and Elasticsearch.
+1. Oracle Java JRE 8 is required by Logstash and Elasticsearch.
 
   .. note::
 
-      The following command accepts the necessary cookies to download Oracle Java JRE. Please, visit `Oracle Java 8 JRE Download Page <https://www.java.com/en/download/manual.jsp>`_ for more information.
+    The following command accepts the necessary cookies to download Oracle Java JRE. Please, visit `Oracle Java 8 JRE Download Page <https://www.java.com/en/download/manual.jsp>`_ for more information.
 
   .. code-block:: console
 
-      # curl -Lo jre-8-linux-x64.rpm --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jre-8u161-linux-x64.rpm"
+    # curl -Lo jre-8-linux-x64.rpm --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u172-b11/a58eab1ec242421181065cdc37240b08/jre-8u172-linux-x64.rpm"
 
   Now, check if the package was download successfully:
 
   .. code-block:: console
 
-      # rpm -qlp jre-8-linux-x64.rpm > /dev/null 2>&1 && echo "Java package downloaded successfully" || echo "Java package did not download successfully"
+    # rpm -qlp jre-8-linux-x64.rpm > /dev/null 2>&1 && echo "Java package downloaded successfully" || echo "Java package did not download successfully"
 
   Finally, install the RPM package using yum:
 
   .. code-block:: console
 
-  	# yum install jre-8-linux-x64.rpm
-  	# rm jre-8-linux-x64.rpm
+    # yum install jre-8-linux-x64.rpm
+    # rm jre-8-linux-x64.rpm
 
 2. Install the Elastic repository and its GPG key:
 
   .. code-block:: console
 
-	# rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
+    # rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
 
-	# cat > /etc/yum.repos.d/elastic.repo << EOF
-	[elasticsearch-6.x]
-	name=Elasticsearch repository for 6.x packages
-	baseurl=https://artifacts.elastic.co/packages/6.x/yum
-	gpgcheck=1
-	gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
-	enabled=1
-	autorefresh=1
-	type=rpm-md
-	EOF
+    # cat > /etc/yum.repos.d/elastic.repo << EOF
+    [elasticsearch-6.x]
+    name=Elasticsearch repository for 6.x packages
+    baseurl=https://artifacts.elastic.co/packages/6.x/yum
+    gpgcheck=1
+    gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    enabled=1
+    autorefresh=1
+    type=rpm-md
+    EOF
 
 Elasticsearch
 -------------
@@ -59,7 +61,7 @@ Elasticsearch is a highly scalable full-text search and analytics engine. For mo
 
   .. code-block:: console
 
-	 # yum install elasticsearch-6.2.2
+    # yum install elasticsearch-6.2.4
 
 2. Enable and start the Elasticsearch service:
 
@@ -67,16 +69,16 @@ Elasticsearch is a highly scalable full-text search and analytics engine. For mo
 
   .. code-block:: console
 
-  	# systemctl daemon-reload
-  	# systemctl enable elasticsearch.service
-  	# systemctl start elasticsearch.service
+    # systemctl daemon-reload
+    # systemctl enable elasticsearch.service
+    # systemctl start elasticsearch.service
 
   b) For SysV Init:
 
   .. code-block:: console
 
-  	# chkconfig --add elasticsearch
-  	# service elasticsearch start
+    # chkconfig --add elasticsearch
+    # service elasticsearch start
 
   It's important to wait until the Elasticsearch server finishes starting. Check the current status with the following command, which should give you a response like the shown below:
 
@@ -89,7 +91,7 @@ Elasticsearch is a highly scalable full-text search and analytics engine. For mo
       "cluster_name" : "elasticsearch",
       "cluster_uuid" : "B5rXKBg2Tr-KWwFdbDHJQg",
       "version" : {
-        "number" : "6.2.2",
+        "number" : "6.2.4",
         "build_hash" : "7299dc3",
         "build_date" : "2018-02-07T19:34:26.990113Z",
         "build_snapshot" : false,
@@ -100,21 +102,11 @@ Elasticsearch is a highly scalable full-text search and analytics engine. For mo
       "tagline" : "You Know, for Search"
     }
 
-3. Load Wazuh Elasticsearch templates:
+3. Load the Wazuh template for Elasticsearch:
 
   .. code-block:: console
 
-	# curl https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/elasticsearch/wazuh-elastic6-template-alerts.json | curl -XPUT 'http://localhost:9200/_template/wazuh' -H 'Content-Type: application/json' -d @-
-
-  .. code-block:: console
-
-	# curl https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/elasticsearch/wazuh-elastic6-template-monitoring.json | curl -XPUT 'http://localhost:9200/_template/wazuh-agent' -H 'Content-Type: application/json' -d @-
-
-4. Insert the sample alert:
-
-  .. code-block:: console
-
-	# curl https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/elasticsearch/alert_sample.json | curl -XPUT "http://localhost:9200/wazuh-alerts-3.x-"`date +%Y.%m.%d`"/wazuh/sample" -H 'Content-Type: application/json' -d @-
+    # curl https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/elasticsearch/wazuh-elastic6-template-alerts.json | curl -XPUT 'http://localhost:9200/_template/wazuh' -H 'Content-Type: application/json' -d @-
 
 .. note::
 
@@ -129,7 +121,7 @@ Logstash is the tool that collects, parses, and forwards data to Elasticsearch f
 
   .. code-block:: console
 
-    # yum install logstash-6.2.2
+    # yum install logstash-6.2.4
 
 2. Download the Wazuh configuration file for Logstash:
 
@@ -154,11 +146,11 @@ Logstash is the tool that collects, parses, and forwards data to Elasticsearch f
 
 .. note::
 
-    Follow the next steps if you use CentOS-6/RHEL-6 or Amazon AMI (logstash uses Upstart like a service manager and needs to be fixed, see `bug <https://bugs.launchpad.net/upstart/+bug/812870/>`_) ::
+    Follow the next steps if you use CentOS-6/RHEL-6 or Amazon AMI (logstash uses Upstart like a service manager and needs to be fixed, see `this bug <https://bugs.launchpad.net/upstart/+bug/812870/>`_):
 
-	1) Edit the file /etc/logstash/startup.options changing line 30 from *LS_GROUP=logstash* to *LS_GROUP=ossec*.
-	2) Update the service with the new parameters by running the command /usr/share/logstash/bin/system-install
-	3) Restart Logstash.
+    1) Edit the file /etc/logstash/startup.options changing line 30 from *LS_GROUP=logstash* to *LS_GROUP=ossec*.
+    2) Update the service with the new parameters by running the command /usr/share/logstash/bin/system-install
+    3) Restart Logstash.
 
 3. Enable and start the Logstash service:
 
@@ -174,8 +166,8 @@ Logstash is the tool that collects, parses, and forwards data to Elasticsearch f
 
   .. code-block:: console
 
-  	# chkconfig --add logstash
-  	# service logstash start
+    # chkconfig --add logstash
+    # service logstash start
 
 .. note::
 
@@ -190,7 +182,7 @@ Kibana is a flexible and intuitive web interface for mining and visualizing the 
 
   .. code-block:: console
 
-	 # yum install kibana-6.2.2
+    # yum install kibana-6.2.4
 
 2. Install the Wazuh App plugin for Kibana:
 
@@ -198,13 +190,13 @@ Kibana is a flexible and intuitive web interface for mining and visualizing the 
 
   .. code-block:: console
 
-      # export NODE_OPTIONS="--max-old-space-size=3072"
+    # export NODE_OPTIONS="--max-old-space-size=3072"
 
   b) Install the Wazuh App:
 
   .. code-block:: console
 
-      # /usr/share/kibana/bin/kibana-plugin install https://packages.wazuh.com/wazuhapp/wazuhapp-3.2.1_6.2.2.zip
+    # /usr/share/kibana/bin/kibana-plugin install https://packages.wazuh.com/wazuhapp/wazuhapp-3.2.2_6.2.4.zip
 
   .. warning::
 
@@ -218,7 +210,7 @@ Kibana is a flexible and intuitive web interface for mining and visualizing the 
 
   .. code-block:: yaml
 
-	 server.host: "0.0.0.0"
+    server.host: "0.0.0.0"
 
   .. note::
 
@@ -230,16 +222,16 @@ Kibana is a flexible and intuitive web interface for mining and visualizing the 
 
   .. code-block:: console
 
-  	# systemctl daemon-reload
-  	# systemctl enable kibana.service
-  	# systemctl start kibana.service
+    # systemctl daemon-reload
+    # systemctl enable kibana.service
+    # systemctl start kibana.service
 
   b) For SysV Init:
 
   .. code-block:: console
 
-  	# chkconfig --add kibana
-  	# service kibana start
+    # chkconfig --add kibana
+    # service kibana start
 
 5. Disable the Elasticsearch repository:
 
@@ -255,6 +247,6 @@ Connecting the Wazuh App with the API
 Follow the next guide in order to connect the Wazuh App with the API:
 
 .. toctree::
-	:maxdepth: 1
+  :maxdepth: 1
 
-	connect_wazuh_app
+  connect_wazuh_app

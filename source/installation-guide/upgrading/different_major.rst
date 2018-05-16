@@ -1,3 +1,5 @@
+.. Copyright (C) 2018 Wazuh, Inc.
+
 .. _upgrading_different_major:
 
 Upgrade from different major version
@@ -37,7 +39,6 @@ Upgrade Wazuh agent
 
       # echo "deb https://packages.wazuh.com/3.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
 
-
 3. Upgrade the agent.
 
   a) Upgrade the Wazuh agent on CentOS/RHEL/Fedora:
@@ -53,6 +54,27 @@ Upgrade Wazuh agent
       # apt-get update
       # apt-get install wazuh-agent
 
+  c) For Windows:
+
+  The agent upgrading process for Windows systems requires to download the latest available installer from the :ref:`packages list <packages>`. There are two ways of using it (both of them require **administrator rights**):
+
+  * Using the GUI installer:
+
+  Open the installer and follow the instructions to upgrade the agent.
+
+    .. image:: ../../images/installation/windows.png
+      :align: center
+
+  * Using the command line:
+
+  To upgrade the Windows agent from the command line, run the installer using Windows PowerShell or the command prompt (the ``/q`` argument is used for unattended installations):
+
+  .. code-block:: console
+
+    # wazuh-agent-3.2.2-1.msi /q
+
+.. note::
+  To learn more about the unattended installation process, you can check the :ref:`Windows installation guide <wazuh_agent_windows>`.
 
 Upgrade Wazuh manager
 ---------------------
@@ -172,14 +194,14 @@ Upgrade Elasticsearch
 
     .. code-block:: console
 
-      # yum install elasticsearch-6.2.2
+      # yum install elasticsearch-6.2.4
 
   b) For Debian/Ubuntu:
 
     .. code-block:: console
 
       # apt-get update
-      # apt-get install elasticsearch=6.2.2
+      # apt-get install elasticsearch=6.2.4
 
 
 2. Start Elasticsearch:
@@ -201,7 +223,7 @@ Upgrade Elasticsearch
       "cluster_name" : "elasticsearch",
       "cluster_uuid" : "B5rXKBg2Tr-KWwFdbDHJQg",
       "version" : {
-        "number" : "6.2.2",
+        "number" : "6.2.4",
         "build_hash" : "7299dc3",
         "build_date" : "2018-02-07T19:34:26.990113Z",
         "build_snapshot" : false,
@@ -212,23 +234,11 @@ Upgrade Elasticsearch
       "tagline" : "You Know, for Search"
     }
 
-3. Load the Wazuh Elasticsearch templates:
+3. Load the Wazuh template for Elasticsearch:
 
   .. code-block:: console
 
     # curl https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/elasticsearch/wazuh-elastic6-template-alerts.json | curl -XPUT 'http://localhost:9200/_template/wazuh' -H 'Content-Type: application/json' -d @-
-
-  .. code-block:: console
-
-    # curl https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/elasticsearch/wazuh-elastic6-template-monitoring.json | curl -XPUT 'http://localhost:9200/_template/wazuh-agent' -H 'Content-Type: application/json' -d @-
-
-
-4. Insert sample alert in Elasticsearch:
-
-  .. code-block:: console
-
-    # curl https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/elasticsearch/alert_sample.json | curl -XPUT "http://localhost:9200/wazuh-alerts-3.x-"`date +%Y.%m.%d`"/wazuh/sample" -H 'Content-Type: application/json' -d @-
-
 
 Upgrade Logstash
 ----------------
@@ -239,13 +249,13 @@ Upgrade Logstash
 
     .. code-block:: console
 
-      # yum install logstash-6.2.2
+      # yum install logstash-6.2.4
 
   b) For Debian/Ubuntu:
 
     .. code-block:: console
 
-      # apt-get install logstash=1:6.2.2-1
+      # apt-get install logstash=1:6.2.4-1
 
 
 2. Download and set the Wazuh configuration for Logstash:
@@ -254,7 +264,7 @@ Upgrade Logstash
 
     .. code-block:: console
 
-      # cp /etc/logstash/conf.d/01-wazuh.conf /etc/logstash/conf.d/01-wazuh.conf.bak
+      # cp /etc/logstash/conf.d/01-wazuh.conf /backup_directory/01-wazuh.conf.bak
       # curl -so /etc/logstash/conf.d/01-wazuh.conf https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/logstash/01-wazuh-local.conf
       # usermod -a -G ossec logstash
 
@@ -262,7 +272,7 @@ Upgrade Logstash
 
     .. code-block:: console
 
-      # cp /etc/logstash/conf.d/01-wazuh.conf /etc/logstash/conf.d/01-wazuh.conf.bak
+      # cp /etc/logstash/conf.d/01-wazuh.conf /backup_directory/01-wazuh.conf.bak
       # curl -so /etc/logstash/conf.d/01-wazuh.conf https://raw.githubusercontent.com/wazuh/wazuh/3.2/extensions/logstash/01-wazuh-remote.conf
 
 
@@ -284,13 +294,13 @@ Upgrade Kibana
 
     .. code-block:: console
 
-      # yum install kibana-6.2.2
+      # yum install kibana-6.2.4
 
   b) For Debian/Ubuntu:
 
     .. code-block:: console
 
-      # apt-get install kibana=6.2.2
+      # apt-get install kibana=6.2.4
 
 
 2. Remove the Wazuh Kibana App plugin from Kibana:
@@ -320,7 +330,7 @@ Upgrade Kibana
   .. code-block:: console
 
       # rm -rf /usr/share/kibana/optimize/bundles
-      # /usr/share/kibana/bin/kibana-plugin install https://packages.wazuh.com/wazuhapp/wazuhapp-3.2.1_6.2.2.zip
+      # /usr/share/kibana/bin/kibana-plugin install https://packages.wazuh.com/wazuhapp/wazuhapp-3.2.2_6.2.4.zip
 
 
 5. Start Kibana:
@@ -340,13 +350,13 @@ Upgrade Filebeat
 
     .. code-block:: console
 
-      # yum install filebeat-6.2.2
+      # yum install filebeat-6.2.4
 
   b) For Debian/Ubuntu:
 
     .. code-block:: console
 
-      # apt-get install filebeat=6.2.2
+      # apt-get install filebeat=6.2.4
 
 2. Download the Filebeat configuration file from the Wazuh repository:
 
@@ -395,7 +405,8 @@ We recommend that the Elasticsearch repository be disabled in order to prevent a
 
     .. code-block:: console
 
-      # sed -i -r '/deb https:\/\/artifacts.elastic.co\/packages\/6.x\/apt stable main/ s/^(.*)$/#\1/g' /etc/apt/sources.list.d/elastic-6.x.list
+      # sed -i "s/^deb/#deb/" /etc/apt/sources.list.d/elastic-6.x.list
+      # apt-get update
 
 Reindexing your previous alerts
 -------------------------------
